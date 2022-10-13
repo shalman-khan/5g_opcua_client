@@ -9,62 +9,68 @@ from opcua_interfaces.msg import ServerAction, AmrStatus, TmStatus
 
 class TM_node_class(Node):
     """
-    Create a Opcua_Client class, which is a subclass of the Node class.
+        TM_Sim_Node Class: Subclass of Node
     """
     def __init__(self):
         """
         Class constructor to set up the node
         """
         # Initiate the Node class's constructor and give it a name
-        super().__init__('amr_ros2')
-        self.tm_fdbk = TmStatus()
+        super().__init__('tm_ros2')
+        self.tm_fdbk_ = TmStatus()
         self.amr_publisher_ = self.create_publisher(TmStatus, 'tm_fdbk', 10)
-        self.amr_subscriber = self.create_subscription(
+        self.tm_subscriber_ = self.create_subscription(
             ServerAction,
             'opcua_action',
             self.amr_action_from_opcua,
             10)
-        self.amr_subscriber
+        self.tm_subscriber_
         timer_period = 0.5  # seconds
 
-        self.tm_status_timer = self.create_timer(timer_period, self.tm_feedback_to_opcua)
+        self.tm_status_timer_ = self.create_timer(timer_period, self.tm_feedback_to_opcua)
 
-        self.tm_fdbk = TmStatus()
+        self.tm_fdbk_ = TmStatus()
         self.amr_state = None
 
     def tm_feedback_to_opcua(self):
-
+        """
+            Dummy Function to Publish TM Current Status information
+            Checks the AMR action status to set TM Status
+        """
         if self.amr_state == "Idle":
-            self.tm_fdbk.pick = True
-            self.tm_fdbk.place = True
+            self.tm_fdbk_.pick = True
+            self.tm_fdbk_.place = True
 
         else:
-            self.tm_fdbk.pick = False
-            self.tm_fdbk.place = False
+            self.tm_fdbk_.pick = False
+            self.tm_fdbk_.place = False
 
-        self.amr_publisher_.publish(self.tm_fdbk)
+        self.amr_publisher_.publish(self.tm_fdbk_)
 
     def amr_action_from_opcua(self, amr_action):
-        print("OPCUA AMR Action Request", amr_action.action_request)
+        """
+            Dummy Function to Set AMR Status Action Request
+        """
         self.amr_state = amr_action.action_request
+        print("OPCUA AMR Action Request: ", self.amr_state)
+        print("----------------------------------------------")
+
 
 def main(args=None):
 
-    # Initialize the rclpy library
+    # Rclpy library Initialization
     rclpy.init(args=args)
 
-    # Create the node
+    # Node creation for AMR Status information simulation
     TM_node = TM_node_class()
 
-    # Spin the node so the callback function is called.
+    # Node Spin to TM Status Update Alive
     rclpy.spin(TM_node)
 
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
+    # Node Destroy to free Resources used by Node
     TM_node.destroy_node()
 
-    # Shutdown the ROS client library for Python
+    # ROS Client Library Shutdown
     rclpy.shutdown()
 
 if __name__ == '__main__':

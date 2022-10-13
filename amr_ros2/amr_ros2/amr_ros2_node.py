@@ -1,70 +1,89 @@
 # ROS Client Library for Python
 import rclpy
 
-# Handles the creation of nodes
+# Import for Node Creation
 from rclpy.node import Node
 
+# Import for Message types used for Action and Feedbacks
 from opcua_interfaces.msg import ServerAction,AmrStatus, TmStatus
 
 
-class AMR_node_class(Node):
+class AMR_Sim_Node(Node):
     """
-    Create a Opcua_Client class, which is a subclass of the Node class.
+        AMR_Sim_Node Class: Subclass of Node
     """
     def __init__(self):
         """
         Class constructor to set up the node
         """
-        # Initiate the Node class's constructor and give it a name
+        # Node Class's Constructor Initialization
         super().__init__('amr_ros2')
-        self.amr_fdbk = AmrStatus()
+
+        # Publisher Initialization: For sending AMR Status to OPCUA
+        # Ex: AMR current Position, AMR IMU information
         self.amr_publisher_ = self.create_publisher(AmrStatus, 'amr_fdbk', 10)
-        self.amr_subscriber = self.create_subscription(
+
+        # Subscriber Initialization: For Receiving OPCUA Action Requests
+        # For Example: Server's request to go to a position or execute E stop
+        self.amr_subscriber_ = self.create_subscription(
             ServerAction,
             'opcua_action',
             self.amr_action_from_opcua,
             10)
-        self.amr_subscriber
+        self.amr_subscriber_
+
+        # Frequency to Publish amr status
         timer_period = 0.5  # seconds
 
+        # Timer to run the Publisher based on timer_period
         self.amr_status_timer = self.create_timer(timer_period, self.amr_feedback_to_opcua)
 
-        self.amr_status_msg = AmrStatus()
+        # Variable Initialization for Message type to be Published
+        self.amr_fdbk_ = AmrStatus()
+
 
     def amr_feedback_to_opcua(self):
+        """
+            Dummy Function to Publish AMR Current Status information
+            Replace the variables values based on the AMR API
+        """
 
-        self.amr_fdbk.status = True
-        self.amr_fdbk.battery_perc = 99.98
+        self.amr_fdbk_.status = True
+        self.amr_fdbk_.battery_perc = 99.98
 
-        self.amr_fdbk.position[0] = 100.2
-        self.amr_fdbk.position[1] = 200.4
-        self.amr_fdbk.position[2] = 90.0
+        self.amr_fdbk_.position[0] = 100.2
+        self.amr_fdbk_.position[1] = 200.4
+        self.amr_fdbk_.position[2] = 90.0
 
-        self.amr_fdbk.imu[0] = 1.2
-        self.amr_fdbk.imu[1] = 1.2
-        self.amr_fdbk.imu[2] = 1.2
-        self.amr_fdbk.imu[3] = 1.2
+        self.amr_fdbk_.imu[0] = 1.2
+        self.amr_fdbk_.imu[1] = 1.2
+        self.amr_fdbk_.imu[2] = 1.2
+        self.amr_fdbk_.imu[3] = 1.2
 
-        self.amr_fdbk.imu[4] = 1.2
-        self.amr_fdbk.imu[5] = 1.2
-        self.amr_fdbk.imu[6] = 1.2
+        self.amr_fdbk_.imu[4] = 1.2
+        self.amr_fdbk_.imu[5] = 1.2
+        self.amr_fdbk_.imu[6] = 1.2
 
-        self.amr_fdbk.imu[7] = 1.2
-        self.amr_fdbk.imu[8] = 1.2
-        self.amr_fdbk.imu[9] = 1.2
+        self.amr_fdbk_.imu[7] = 1.2
+        self.amr_fdbk_.imu[8] = 1.2
+        self.amr_fdbk_.imu[9] = 1.2
 
-        self.amr_fdbk.odom[1] = 7.8
-        self.amr_fdbk.odom[0] = 7.8
-        self.amr_fdbk.odom[2] = 7.8
+        self.amr_fdbk_.odom[1] = 7.8
+        self.amr_fdbk_.odom[0] = 7.8
+        self.amr_fdbk_.odom[2] = 7.8
 
-        self.amr_fdbk.odom[3] = 7.8
-        self.amr_fdbk.odom[4] = 7.8
-        self.amr_fdbk.odom[5] = 7.8
+        self.amr_fdbk_.odom[3] = 7.8
+        self.amr_fdbk_.odom[4] = 7.8
+        self.amr_fdbk_.odom[5] = 7.8
 
 
-        self.amr_publisher_.publish(self.amr_fdbk)
+        self.amr_publisher_.publish(self.amr_fdbk_)
 
     def amr_action_from_opcua(self, amr_action):
+        """
+            Dummy Function to Retrieve Server Request
+            Transfer Retrieved Variable Values for Further Operations
+        """
         print("OPCUA AMR Action Request", amr_action.action_request)
         print("OPCUA AMR E-Stop Request", amr_action.estop)
         print("OPCUA AMR Position Request", amr_action.goto_pos)
@@ -75,21 +94,19 @@ class AMR_node_class(Node):
 
 def main(args=None):
 
-    # Initialize the rclpy library
+    # Rclpy library Initialization
     rclpy.init(args=args)
 
-    # Create the node
-    AMR_node = AMR_node_class()
+    # Node creation for AMR Status information simulation
+    AMR_node = AMR_Sim_Node()
 
-    # Spin the node so the callback function is called.
+    # Node Spin to AMR Status Update Alive
     rclpy.spin(AMR_node)
 
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
+    # Node Destroy to free Resources used by Node
     AMR_node.destroy_node()
 
-    # Shutdown the ROS client library for Python
+    # ROS Client Library Shutdown
     rclpy.shutdown()
 
 if __name__ == '__main__':

@@ -3,7 +3,7 @@
 <package format="3">
   <name>tm_ros2</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>TM Status Simulation Package</description>
   <maintainer email="sshaba9406@outlook.com">rosi</maintainer>
   <license>TODO: License declaration</license>
 
