@@ -124,7 +124,7 @@ if __name__ == "__main__":
     # Actions for robots
     myvar[43] = myobj.add_variable(idx, "bPick_ip_st", False, ua.VariantType.Boolean)
     myvar[44] = myobj.add_variable(idx, "bPlace_cmm_st", False, ua.VariantType.Boolean)
-    myvar[45] = myobj.add_variable(idx, "bPick_cmm_st", False, ua.VariantType.Boolean)
+    myvar[45] = myobj.add_variable(idx, "bPick_cmm_st", True, ua.VariantType.Boolean)
     myvar[46] = myobj.add_variable(idx, "bPlace_ip_st", False, ua.VariantType.Boolean)
 
     for variables in range(len(myvar)):

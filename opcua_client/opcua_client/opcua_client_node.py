@@ -48,13 +48,13 @@ class Opcua_Client(Node):
             10)
         self.amr_subscriber_
 
-        # Subscriber Initialization: For Receiving TM12(Manipulator) Status Information
-        self.tm_subscriber_ = self.create_subscription(
-            TmStatus,
-            'tm_fdbk',
-            self.tm_feedback_to_opcua,
-            10)
-        self.tm_subscriber_
+        # # Subscriber Initialization: For Receiving TM12(Manipulator) Status Information
+        # self.tm_subscriber_ = self.create_subscription(
+        #     TmStatus,
+        #     'tm_fdbk',
+        #     self.tm_feedback_to_opcua,
+        #     10)
+        # self.tm_subscriber_
 
         # Frequency to Publish action_publisher_
         timer_period = 0.5  # seconds
@@ -127,15 +127,15 @@ class Opcua_Client(Node):
         self.ua_set_value("2:fGet_AMR_odom_twist_orien_y", ua.VariantType.Float, amr_fdbk_.odom[4])
         self.ua_set_value("2:fGet_AMR_odom_twist_ang_z", ua.VariantType.Float, amr_fdbk_.odom[5])
 
-    def tm_feedback_to_opcua(self, tm_fdbk_):
-        """
-        Function To Send TM12M Updated Status Feedback Information to OPCUA Address Space
-        """
-        self.ua_get_root_node()
-
-        # Set Pick and Place Status
-        self.ua_set_value("2:bPick_cmm_st", ua.VariantType.Boolean, tm_fdbk_.pick)
-        self.ua_set_value("2:bPlace_cmm_st", ua.VariantType.Boolean, tm_fdbk_.place)
+    # def tm_feedback_to_opcua(self, tm_fdbk_):
+    #     """
+    #     Function To Send TM12M Updated Status Feedback Information to OPCUA Address Space
+    #     """
+    #     self.ua_get_root_node()
+    #
+    #     # Set Pick and Place Status
+    #     self.ua_set_value("2:bPick_cmm_st", ua.VariantType.Boolean, tm_fdbk_.pick)
+    #     self.ua_set_value("2:bPlace_cmm_st", ua.VariantType.Boolean, tm_fdbk_.place)
 
 
 
@@ -160,6 +160,10 @@ class Opcua_Client(Node):
         # Required AMR Pause/Ready Action
         self.action_msg_.pause_amr = self.ua_get_value("2:bSet_pause_AMR")
         self.action_msg_.ready_amr = self.ua_get_value("2:bSet_ready_AMR")
+
+        # Required TM Pick/Place Action
+        self.action_msg_.pick_operation = self.ua_get_value("2:bPick_cmm_st")
+        self.action_msg_.place_operation = self.ua_get_value("2:bPlace_cmm_st")
 
         self.action_publisher_.publish(self.action_msg_)
 
